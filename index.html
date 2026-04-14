@@ -1,3 +1,117 @@
-<a href="preview1.html">민법</a>
-<a href="preview2.html">행정법</a>
-<a href="preview3.html">행정학</a>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>기출문제 인덱스</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: "Pretendard", sans-serif;
+  background: #f5f7fb;
+}
+
+/* 상단 제목 */
+.header {
+  text-align: center;
+  padding: 40px 20px 20px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.header p {
+  margin-top: 8px;
+  color: #666;
+  font-size: 14px;
+}
+
+/* 카드 영역 */
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+/* 카드 */
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px;
+  text-decoration: none;
+  color: #333;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+/* 카드 색상 */
+.card.civil { background: #FFFEE8; }
+.card.admin { background: #FFEDEF; }
+.card.policy { background: #EAF3FF; }
+
+/* 제목 */
+.card h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+/* 설명 */
+.card p {
+  margin-top: 10px;
+  font-size: 13px;
+  color: #666;
+}
+
+/* 아이콘 느낌 */
+.card::after {
+  content: "→";
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  font-size: 18px;
+  color: #999;
+}
+</style>
+
+</head>
+<body>
+
+<div class="header">
+  <h1>기출문제 연습</h1>
+  <p>기출풀고 합격해</p>
+</div>
+
+<div class="container">
+
+  <a href="preview1.html" class="card civil">
+    <h2>민법</h2>
+    <p>2025~2021 기출문제</p>
+  </a>
+
+  <a href="preview2.html" class="card admin">
+    <h2>행정법</h2>
+    <p>2025~2021 기출문제</p>
+  </a>
+
+  <a href="preview3.html" class="card policy">
+    <h2>행정학</h2>
+    <p>2025~2021 기출문제</p>
+  </a>
+
+</div>
+
+</body>
+</html>
