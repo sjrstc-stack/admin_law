@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>행정학 키워드 마인드맵</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #ffffff;
+    --bg-soft: #fafafa;
+    --bg-hover: #f5f5f5;
+    --border: #e5e5e5;
+    --border-soft: #ebebeb;
+    --text: #1e1e1e;
+    --text-secondary: #757575;
+    --text-tertiary: #b3b3b3;
+    --accent: #0d99ff;
+    --line: #d4d4d4;
+
+    --c1: #f24822;
+    --c2: #ffa629;
+    --c3: #ffcd29;
+    --c4: #14ae5c;
+    --c5: #0d99ff;
+    --c6: #9747ff;
+    --c7: #e662a7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', 'Inter', -apple-system, sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+    font-feature-settings: 'tnum';
+    -webkit-font-smoothing: antialiased;
+  }
+
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 16px 24px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 1px solid var(--border-soft);
+    background: var(--bg);
+  }
+
+  .title-block {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .title-mark {
+    width: 24px; height: 24px;
+    border-radius: 6px;
+    background: var(--text);
+    display: grid; place-items: center;
+    color: var(--bg);
+    font-weight: 700;
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  h1 .sub {
+    font-size: 12px;
+    font-weight: 400;
+    color: var(--text-secondary);
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .search-wrap { position: relative; }
+
+  #search {
+    background: var(--bg-soft);
+    border: 1px solid transparent;
+    color: var(--text);
+    padding: 7px 12px 7px 32px;
+    font-family: inherit;
+    font-size: 13px;
+    width: 220px;
+    border-radius: 6px;
+    outline: none;
+    transition: border-color 0.15s, background 0.15s;
+  }
+
+  #search:focus {
+    border-color: var(--accent);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px rgba(13, 153, 255, 0.15);
+  }
+
+  #search::placeholder { color: var(--text-tertiary); }
+
+  .search-icon {
+    position: absolute;
+    left: 10px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-tertiary);
+    pointer-events: none;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border-soft);
+    position: relative;
+    z-index: 5;
+    background: var(--bg);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.12s, color 0.12s;
+    font-weight: 500;
+  }
+
+  .legend-item:hover {
+    background: var(--bg-hover);
+    color: var(--text);
+  }
+
+  .legend-item.active {
+    background: var(--text);
+    color: var(--bg);
+  }
+
+  .legend-item.dim { opacity: 0.4; }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .legend-count {
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .legend-item.active .legend-count { color: rgba(255,255,255,0.7); }
+
+  #canvas {
+    position: relative;
+    width: 100%;
+    height: calc(100vh - 110px);
+    min-height: 700px;
+    overflow: hidden;
+    z-index: 2;
+    background:
+      linear-gradient(var(--border-soft) 1px, transparent 1px) 0 0 / 32px 32px,
+      linear-gradient(90deg, var(--border-soft) 1px, transparent 1px) 0 0 / 32px 32px;
+    background-color: var(--bg);
+  }
+
+  #branches {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+
+  .hub {
+    position: absolute;
+    left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+    background: var(--text);
+    color: var(--bg);
+    padding: 14px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: -0.3px;
+    z-index: 5;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.06);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .chapter {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    cursor: pointer;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    min-width: 110px;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+    user-select: none;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+
+  .chapter:hover {
+    border-color: var(--text);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    transform: translate(-50%, -50%) translateY(-1px);
+  }
+
+  .chapter-head {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+  }
+
+  .chapter-dot {
+    width: 8px; height: 8px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .chapter-num {
+    font-size: 10px;
+    color: var(--text-tertiary);
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    letter-spacing: 0.5px;
+  }
+
+  .chapter-name {
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    color: var(--text);
+  }
+
+  .chapter-meta {
+    font-size: 11px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .chapter.active {
+    border-color: var(--text);
+    background: var(--text);
+  }
+
+  .chapter.active .chapter-name { color: var(--bg); }
+  .chapter.active .chapter-num,
+  .chapter.active .chapter-meta { color: rgba(255,255,255,0.7); }
+
+  .chapter.dim { opacity: 0.3; }
+
+  .keyword {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    text-decoration: none;
+    color: var(--text);
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: -0.1px;
+    white-space: nowrap;
+    transition: all 0.15s;
+    cursor: pointer;
+    user-select: none;
+    box-shadow: 0 1px 1px rgba(0,0,0,0.02);
+  }
+
+  .keyword:hover {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+    transform: translate(-50%, -50%) translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+    z-index: 6;
+  }
+
+  .keyword.match {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+    box-shadow: 0 0 0 3px rgba(13, 153, 255, 0.2);
+    z-index: 6;
+  }
+
+  .keyword.dim {
+    opacity: 0.18;
+    pointer-events: none;
+  }
+
+  .branch {
+    fill: none;
+    stroke: var(--line);
+    stroke-width: 1;
+    transition: opacity 0.2s, stroke 0.2s;
+  }
+
+  .branch.major { stroke-width: 1.25; opacity: 0.7; }
+  .branch.minor { opacity: 0.5; }
+  .branch.dim { opacity: 0.08; }
+
+  footer {
+    position: relative;
+    z-index: 10;
+    padding: 10px 24px;
+    border-top: 1px solid var(--border-soft);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+    flex-wrap: wrap;
+    gap: 8px;
+    background: var(--bg);
+  }
+
+  footer kbd {
+    background: var(--bg-soft);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    color: var(--text);
+    margin: 0 2px;
+  }
+
+  @media (max-width: 900px) {
+    #canvas { display: none; }
+
+    .mobile-list {
+      display: block !important;
+      padding: 16px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .ml-chapter {
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      transition: opacity 0.2s;
+    }
+
+    .ml-head {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .ml-dot {
+      width: 8px; height: 8px;
+      border-radius: 2px;
+    }
+
+    .ml-num {
+      font-size: 11px;
+      color: var(--text-tertiary);
+      font-family: 'Inter', sans-serif;
+      letter-spacing: 0.5px;
+    }
+
+    .ml-title {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: -0.2px;
+    }
+
+    .ml-count {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-left: auto;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .ml-keywords {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .ml-kw {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+
+    .ml-kw:hover {
+      background: var(--text);
+      color: var(--bg);
+      border-color: var(--text);
+    }
+
+    .ml-kw.match {
+      background: var(--accent);
+      color: var(--bg);
+      border-color: var(--accent);
+    }
+
+    .ml-kw.dim { opacity: 0.25; }
+
+    header { padding: 12px 16px; }
+    .legend { padding: 8px 16px; }
+    footer { padding: 10px 16px; font-size: 11px; }
+    #search { width: 160px; font-size: 12px; }
+    h1 .sub { display: none; }
+  }
+
+  .mobile-list { display: none; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translate(-50%, -50%) translateY(8px); }
+    to { opacity: 1; transform: translate(-50%, -50%) translateY(0); }
+  }
+
+  .chapter, .keyword {
+    animation: fadeUp 0.4s ease backwards;
+  }
+
+  @keyframes drawBranch {
+    from { stroke-dashoffset: 1000; }
+    to { stroke-dashoffset: 0; }
+  }
+
+  .branch {
+    stroke-dasharray: 1000;
+    animation: drawBranch 0.8s ease forwards;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="title-block">
+    <div class="title-mark">행</div>
+    <h1>
+      행정학 키워드 마인드맵
+      <span class="sub">Public Administration</span>
+    </h1>
+  </div>
+  <div class="controls">
+    <div class="search-wrap">
+      <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="7"/>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input type="search" id="search" placeholder="키워드 검색…">
+    </div>
+  </div>
+</header>
+
+<div class="legend" id="legend"></div>
+
+<div id="canvas">
+  <svg id="branches"></svg>
+  <div class="hub">행정학</div>
+</div>
+
+<div class="mobile-list" id="mobileList"></div>
+
+<footer>
+  <div>
+    <kbd>클릭</kbd> 노션 페이지 이동 · <kbd>챕터</kbd> 필터 · <kbd>esc</kbd> 해제
+  </div>
+  <div>
+    7 chapters · <span id="totalCount">60</span> keywords
+  </div>
+</footer>
+
+<script>
+  const NOTION_BASE = 'https://www.notion.so/';
+
+  const data = [
+    {
+      id: 1, name: '기초이론', fullName: '제1장 행정학의 기초이론',
+      colorHex: '#f24822',
+      keywords: [
+        { name: '행정의 개념과 특성', id: '3433b08f184a80119945ff5fcf29cdba' },
+        { name: '행정의 변천', id: '3433b08f184a8063a0e3e8b25dae0d7f' },
+        { name: '행정의 가치 체계', id: '3433b08f184a80a79de5c80901295e3d' },
+        { name: '행정학의 특징과 체계', id: '3433b08f184a80579599c6c153689ee1' },
+        { name: '공행정과 사행정', id: '3433b08f184a809fb5a9ee74b610d985' },
+        { name: '미국행정학의 형성', id: '3443b08f184a80d5bf88ce4e94101c4f' },
+        { name: '정치행정이원론', id: '3433b08f184a8002a494efbfc660c374' },
+        { name: '발전행정론', id: '3433b08f184a807e81acd532736963d3' },
+        { name: '신행정론', id: '3433b08f184a80f7983ae7967face7f4' },
+        { name: '공공선택론', id: '3433b08f184a8065985cc903a89dda67' },
+        { name: '신공공관리론(NPM)', id: '3433b08f184a80f5bed2fc54c7c6dbdf' },
+        { name: '신공공서비스론(NPS)', id: '3433b08f184a801e850fcd130564c483' },
+        { name: '현상학·포스트모더니즘', id: '3443b08f184a80eba61bddf96e43f724' },
+        { name: '체제론', id: '3433b08f184a805280c6fc738abc7893' },
+        { name: '시장실패의 원인', id: '3433b08f184a80709fbcde94c57c17f8' },
+        { name: '정부실패의 원인', id: '3433b08f184a80479b74c57c49626b56' },
+        { name: '공공서비스', id: '3433b08f184a80f5b222e0f5c9294c46' },
+        { name: '공익론', id: '3433b08f184a80548301f937cbe6450a' },
+        { name: '이론 정리', id: '3443b08f184a802a8d35fc781e4e79be' },
+      ],
+    },
+    {
+      id: 2, name: '정책론', fullName: '제2장 정책론',
+      colorHex: '#ffa629',
+      keywords: [
+        { name: '정책과 정책학', id: '3433b08f184a80b59ee7ff9a20d99c36' },
+        { name: '정책문제와 정책목표', id: '3433b08f184a8069976de53f48935336' },
+        { name: '정책유형', id: '3443b08f184a804ab7abdbfe88c73377' },
+        { name: '정책수단', id: '3443b08f184a8069a38cf98c67aff3b4' },
+        { name: '정책참여자', id: '3433b08f184a8055929ee491abe5f871' },
+        { name: '정책의제설정', id: '3433b08f184a80fc9201d934e5a923cb' },
+        { name: '개인 정책결정모형', id: '3433b08f184a8049a838f59fc6313363' },
+        { name: '집단 정책결정모형', id: '3433b08f184a80619d05e7c95ac005f2' },
+        { name: '비용편익·비용효과 분석', id: '3433b08f184a80e4a0afc4c91d753953' },
+        { name: '정책집행', id: '3433b08f184a8071bc7cf5d84b11cae1' },
+        { name: '정책집행유형', id: '3433b08f184a80af8980d2a74cc5e8c3' },
+        { name: '정책의 불응·순응', id: '3443b08f184a8086b022ec15e66ce553' },
+        { name: '정책평가의 유형', id: '3433b08f184a80e49ae4e8cf5a1c9f3e' },
+        { name: '정책평가의 방법', id: '3433b08f184a80b2a9c2e37552015567' },
+      ],
+    },
+    {
+      id: 3, name: '조직론', fullName: '제3장 조직론',
+      colorHex: '#ffcd29',
+      keywords: [
+        { name: '조직이론', id: '3433b08f184a80a4a6f1c762dfc80626' },
+        { name: '조직이론의 발전', id: '3433b08f184a80308ee2dbe91e82588f' },
+        { name: '조직구조론', id: '3433b08f184a8046bb5df7815e8911f8' },
+        { name: '조직구조의 변수', id: '3463b08f184a8013b0cbe9267846c100' },
+        { name: '우리나라의 정부조직', id: '3463b08f184a80cb8862d27fbc8eadd6' },
+        { name: '관료제·탈관료제·위원회', id: '3433b08f184a80529ba9d33e274ee639' },
+        { name: '동기부여 이론', id: '3433b08f184a80b181b2dc74968b8a9c' },
+        { name: '리더십 이론', id: '34a3b08f184a807aaae9cb1f0b3aeaa6' },
+        { name: '조직의 혁신', id: '3433b08f184a800aa497fec80eeb03c3' },
+      ],
+    },
+    {
+      id: 4, name: '인사행정', fullName: '제4장 인사행정론',
+      colorHex: '#14ae5c',
+      keywords: [
+        { name: '공직(공무원)제도', id: '3433b08f184a803780b8f86c1d58e248' },
+        { name: '임용 원칙의 진화', id: '3433b08f184a80319eb2d715d57d50ff' },
+        { name: '공무원 임용제', id: '3433b08f184a808c951de07c8622b67f' },
+        { name: '공무원의 능력발전', id: '3433b08f184a806db260c5d93c2cbbea' },
+        { name: '공무원의 복지·사기증진', id: '3433b08f184a8092b47ac2a64d324697' },
+        { name: '공직윤리·부패·징계', id: '3433b08f184a8008a783e4597bebbc74' },
+      ],
+    },
+    {
+      id: 5, name: '재무행정', fullName: '제5장 재무행정론',
+      colorHex: '#0d99ff',
+      keywords: [
+        { name: '예산의 개념과 기능', id: '3433b08f184a803ebf49e2c0473b4ceb' },
+        { name: '예산의 종류', id: '3433b08f184a800e92c4efbf9cff8ed0' },
+        { name: '예산과정', id: '3433b08f184a803693ddeace5f6263f7' },
+        { name: '예산제도·결정모형', id: '3433b08f184a802da665ed6ca48462e6' },
+      ],
+    },
+    {
+      id: 6, name: '환류론', fullName: '제6장 행정환류론',
+      colorHex: '#9747ff',
+      keywords: [
+        { name: '행정책임의 유형', id: '3433b08f184a80bb8d31d988f4c5f063' },
+        { name: '행정개혁', id: '3433b08f184a802da405dc58b17aa077' },
+        { name: '전자정부', id: '3433b08f184a8046a458f0a7d83311ea' },
+      ],
+    },
+    {
+      id: 7, name: '지방자치', fullName: '제7장 지방자치론',
+      colorHex: '#e662a7',
+      keywords: [
+        { name: '지방자치의 의의', id: '3433b08f184a805c97c8f58f15acb9e4' },
+        { name: '자치단체 종류·기관·사무', id: '3433b08f184a800d8f6ae5bc7bfe949f' },
+        { name: '자치단체와 국가의 관계', id: '3433b08f184a8033b389c1eb9a6e2195' },
+        { name: '자치단체의 주민', id: '3433b08f184a8059b951dce74b83122d' },
+        { name: '자치단체의 재정', id: '3433b08f184a803f80d9c08eae9723cb' },
+      ],
+    },
+  ];
+
+  const totalKeywords = data.reduce((s, c) => s + c.keywords.length, 0);
+  document.getElementById('totalCount').textContent = totalKeywords;
+
+  const legend = document.getElementById('legend');
+  data.forEach(ch => {
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.dataset.chapterId = ch.id;
+    item.innerHTML = `
+      <span class="legend-dot" style="background:${ch.colorHex}"></span>
+      ${ch.name}
+      <span class="legend-count">${ch.keywords.length}</span>
+    `;
+    item.addEventListener('click', () => focusChapter(ch.id));
+    legend.appendChild(item);
+  });
+
+  const canvas = document.getElementById('canvas');
+  const branches = document.getElementById('branches');
+
+  function drawMindmap() {
+    canvas.querySelectorAll('.chapter, .keyword').forEach(el => el.remove());
+    branches.innerHTML = '';
+
+    const rect = canvas.getBoundingClientRect();
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    branches.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+    branches.setAttribute('width', rect.width);
+    branches.setAttribute('height', rect.height);
+
+    const chapterRadius = Math.min(rect.width, rect.height) * 0.24;
+    const baseKwRadius = Math.min(rect.width, rect.height) * 0.42;
+
+    let angleAcc = -Math.PI / 2;
+    const meta = data.map(ch => {
+      const span = (ch.keywords.length / totalKeywords) * Math.PI * 2;
+      const startA = angleAcc;
+      const endA = angleAcc + span;
+      const centerA = (startA + endA) / 2;
+      angleAcc = endA;
+      return { ch, startA, endA, centerA, span };
+    });
+
+    meta.forEach((m, idx) => {
+      const { ch, startA, endA, centerA, span } = m;
+      const ccx = cx + chapterRadius * Math.cos(centerA);
+      const ccy = cy + chapterRadius * Math.sin(centerA);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      const midX = cx + chapterRadius * 0.55 * Math.cos(centerA);
+      const midY = cy + chapterRadius * 0.55 * Math.sin(centerA);
+      path.setAttribute('d', `M ${cx} ${cy} Q ${midX} ${midY} ${ccx} ${ccy}`);
+      path.setAttribute('class', 'branch major');
+      path.dataset.chapterId = ch.id;
+      branches.appendChild(path);
+
+      const chNode = document.createElement('div');
+      chNode.className = 'chapter';
+      chNode.dataset.chapterId = ch.id;
+      chNode.style.left = ccx + 'px';
+      chNode.style.top = ccy + 'px';
+      chNode.style.animationDelay = (0.05 + idx * 0.05) + 's';
+      chNode.innerHTML = `
+        <div class="chapter-head">
+          <span class="chapter-dot" style="background:${ch.colorHex}"></span>
+          <span class="chapter-num">CH ${String(ch.id).padStart(2,'0')}</span>
+        </div>
+        <div class="chapter-name">${ch.name}</div>
+        <div class="chapter-meta">${ch.keywords.length} keywords</div>
+      `;
+      chNode.addEventListener('click', e => {
+        e.stopPropagation();
+        focusChapter(ch.id);
+      });
+      canvas.appendChild(chNode);
+
+      const numKw = ch.keywords.length;
+      const useTwoLayers = numKw > 10;
+
+      ch.keywords.forEach((kw, i) => {
+        let layer = 0, layerIdx = i, layerCount = numKw;
+        if (useTwoLayers) {
+          const half = Math.ceil(numKw / 2);
+          if (i >= half) { layer = 1; layerIdx = i - half; layerCount = numKw - half; }
+          else { layerCount = half; }
+        }
+
+        const margin = span * 0.06;
+        const usableSpan = span - 2 * margin;
+        const t = layerCount === 1 ? 0.5 : layerIdx / (layerCount - 1);
+        const angle = (m.startA + margin) + t * usableSpan;
+        const r = baseKwRadius + layer * 75;
+
+        const kx = cx + r * Math.cos(angle);
+        const ky = cy + r * Math.sin(angle);
+
+        const kPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const kMidX = ccx + (kx - ccx) * 0.5;
+        const kMidY = ccy + (ky - ccy) * 0.5;
+        kPath.setAttribute('d', `M ${ccx} ${ccy} Q ${kMidX} ${kMidY} ${kx} ${ky}`);
+        kPath.setAttribute('class', 'branch minor');
+        kPath.dataset.chapterId = ch.id;
+        branches.appendChild(kPath);
+
+        const kNode = document.createElement('a');
+        kNode.className = 'keyword';
+        kNode.href = NOTION_BASE + kw.id;
+        kNode.dataset.chapterId = ch.id;
+        kNode.dataset.name = kw.name;
+        kNode.style.left = kx + 'px';
+        kNode.style.top = ky + 'px';
+        kNode.style.animationDelay = (0.2 + idx * 0.05 + i * 0.015) + 's';
+        kNode.textContent = kw.name;
+        canvas.appendChild(kNode);
+      });
+    });
+  }
+
+  let activeChapter = null;
+  function focusChapter(id) {
+    if (activeChapter === id) {
+      activeChapter = null;
+      clearFocus();
+      return;
+    }
+    activeChapter = id;
+    document.querySelectorAll('.chapter').forEach(c => {
+      const isActive = +c.dataset.chapterId === id;
+      c.classList.toggle('active', isActive);
+      c.classList.toggle('dim', !isActive);
+    });
+    document.querySelectorAll('.keyword').forEach(k => {
+      k.classList.toggle('dim', +k.dataset.chapterId !== id);
+      k.classList.remove('match');
+    });
+    document.querySelectorAll('.branch').forEach(b => {
+      b.classList.toggle('dim', +b.dataset.chapterId !== id);
+    });
+    document.querySelectorAll('.legend-item').forEach(l => {
+      const isActive = +l.dataset.chapterId === id;
+      l.classList.toggle('active', isActive);
+      l.classList.toggle('dim', !isActive);
+    });
+    document.querySelectorAll('.ml-chapter').forEach(c => {
+      c.style.opacity = +c.dataset.chapterId === id ? '1' : '0.25';
+    });
+  }
+
+  function clearFocus() {
+    activeChapter = null;
+    document.querySelectorAll('.dim, .active, .match').forEach(el => {
+      el.classList.remove('dim', 'active', 'match');
+    });
+    document.querySelectorAll('.ml-chapter').forEach(c => c.style.opacity = '1');
+  }
+
+  const searchInput = document.getElementById('search');
+  searchInput.addEventListener('input', e => {
+    const q = e.target.value.trim().toLowerCase();
+    activeChapter = null;
+    document.querySelectorAll('.legend-item').forEach(l => l.classList.remove('active', 'dim'));
+    document.querySelectorAll('.chapter').forEach(c => c.classList.remove('active'));
+
+    if (!q) { clearFocus(); return; }
+
+    document.querySelectorAll('.keyword, .ml-kw').forEach(k => {
+      const matches = k.dataset.name.toLowerCase().includes(q);
+      k.classList.toggle('match', matches);
+      k.classList.toggle('dim', !matches);
+    });
+    document.querySelectorAll('.chapter').forEach(c => c.classList.add('dim'));
+    document.querySelectorAll('.branch').forEach(b => b.classList.add('dim'));
+
+    const matchedChapters = new Set();
+    document.querySelectorAll('.keyword.match, .ml-kw.match').forEach(k => {
+      matchedChapters.add(k.dataset.chapterId);
+    });
+    matchedChapters.forEach(id => {
+      const ch = document.querySelector(`.chapter[data-chapter-id="${id}"]`);
+      if (ch) ch.classList.remove('dim');
+      document.querySelectorAll(`.branch[data-chapter-id="${id}"]`).forEach(b => b.classList.remove('dim'));
+    });
+  });
+
+  canvas.addEventListener('click', e => {
+    if (e.target === canvas || e.target === branches) {
+      searchInput.value = '';
+      clearFocus();
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      searchInput.value = '';
+      searchInput.blur();
+      clearFocus();
+    }
+  });
+
+  const mobileList = document.getElementById('mobileList');
+  data.forEach(ch => {
+    const div = document.createElement('div');
+    div.className = 'ml-chapter';
+    div.dataset.chapterId = ch.id;
+    let html = `
+      <div class="ml-head">
+        <span class="ml-dot" style="background:${ch.colorHex}"></span>
+        <span class="ml-num">CH ${String(ch.id).padStart(2,'0')}</span>
+        <span class="ml-title">${ch.name}</span>
+        <span class="ml-count">${ch.keywords.length}</span>
+      </div>
+      <div class="ml-keywords">
+    `;
+    ch.keywords.forEach(kw => {
+      html += `<a class="ml-kw" data-chapter-id="${ch.id}" data-name="${kw.name}" href="${NOTION_BASE + kw.id}">${kw.name}</a>`;
+    });
+    html += '</div>';
+    div.innerHTML = html;
+    mobileList.appendChild(div);
+  });
+
+  drawMindmap();
+  let resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(drawMindmap, 200);
+  });
+</script>
+</body>
+</html>
